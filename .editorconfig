@@ -1,0 +1,17 @@
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_size = 2
+indent_style = space
+root = true
+trim_trailing_whitespace = true
+
+[{Makefile,.gitconfig}]
+indent_size = 8
+indent_style = tab
+
+[*.tsv{,.txt}]
+indent_size = 8
+indent_style = tab
+trim_trailing_whitespace = false

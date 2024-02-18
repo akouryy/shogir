@@ -1,6 +1,8 @@
 resource "aws_cloudfront_distribution" "shogir_cloudfront_distribution" {
   enabled = true
 
+  price_class = "PriceClass_200"
+
   origin {
     domain_name = aws_s3_bucket.shogir_s3_bucket.bucket_regional_domain_name
     origin_id = aws_s3_bucket.shogir_s3_bucket.id

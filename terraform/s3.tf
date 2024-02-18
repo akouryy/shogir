@@ -8,11 +8,9 @@ resource "aws_s3_bucket_policy" "shogir_s3_bucket_policy" {
 }
 data "aws_iam_policy_document" "shogir_s3_read_policy" {
   statement {
-    sid = "AllowCloudFrontRead"
+    sid = "ShogirAllowCloudFrontRead"
     effect = "Allow"
     principals {
-      # type = "AWS"
-      # identifiers = [aws_cloudfront_origin_access_identity.cloudfront_oai.iam_arn]
       type = "Service"
       identifiers = ["cloudfront.amazonaws.com"]
     }
@@ -28,6 +26,7 @@ data "aws_iam_policy_document" "shogir_s3_read_policy" {
 
 resource "aws_s3_object" "shogir_s3_files_upload" {
   for_each = module.shogir_s3_files.files
+
   bucket = aws_s3_bucket.shogir_s3_bucket.id
   key = each.key
   content_type = each.value.content_type

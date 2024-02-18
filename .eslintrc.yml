@@ -1,0 +1,6 @@
+extends: [a]
+ignorePatterns:
+  - /next.config.js
+  - /next-env.d.ts
+root: true
+# rules:

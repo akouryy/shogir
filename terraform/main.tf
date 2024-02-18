@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "s3_bucket" {
 
 module "s3_files" {
   source = "hashicorp/dir/template"
-  base_dir = "${path.module}/out"
+  base_dir = "${path.module}/../out"
 }
 
 resource "aws_s3_object" "s3_files_upload" {

@@ -24,6 +24,10 @@ resource "aws_cloudfront_distribution" "shogir_cloudfront_distribution" {
         forward = "none"
       }
     }
+    function_association {
+      event_type = "viewer-request"
+      function_arn = aws_cloudfront_function.shogir_cloudfront_spa_function.arn
+    }
   }
 
   restrictions {
@@ -31,6 +35,19 @@ resource "aws_cloudfront_distribution" "shogir_cloudfront_distribution" {
       restriction_type = "none"
     }
   }
+}
+
+resource "aws_cloudfront_function" "shogir_cloudfront_spa_function" {
+  name = "shogir_cloudfront_spa_function"
+  runtime = "cloudfront-js-2.0"
+  code = <<-JS
+    function handler(event) {
+      if (event.request.method === 'GET' && event.request.uri.indexOf('.') === -1) {
+        event.request.uri = '/index.html'
+      }
+      return event.request
+    }
+  JS
 }
 
 resource "aws_cloudfront_origin_access_control" "shogir_cloudfront_oac" {

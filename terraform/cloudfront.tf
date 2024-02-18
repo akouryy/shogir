@@ -16,6 +16,12 @@ resource "aws_cloudfront_distribution" "shogir_cloudfront_distribution" {
     viewer_protocol_policy = "https-only" # TODO: redirect-to-https も検討する
     cached_methods = ["GET", "HEAD"]
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
   }
 
   restrictions {

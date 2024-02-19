@@ -42,8 +42,23 @@ resource "aws_cloudfront_function" "shogir_cloudfront_spa_function" {
   runtime = "cloudfront-js-2.0"
   code = <<-JS
     function handler(event) {
-      if (event.request.method === 'GET' && event.request.uri.indexOf('.') === -1) {
-        event.request.uri = '/index.html'
+      if (event.request.method === 'GET') {
+    %{ for file, _ in module.shogir_s3_files.files ~}
+    %{ if file == "index.html" || endswith(file, "/index.html") ~}
+        if (/\A\/${
+          replace(
+            replace(
+              replace(file, "/\\/?index\\.html\\z/", "/?"),
+              "/", "\\/",
+            ),
+            "/\\[[\\w-]+\\]/", "[\\w-]+",
+          )
+        }\z/.test(event.request.uri)) {
+          event.request.uri = "/${ file }"
+        } else
+    %{ endif ~}
+    %{ endfor ~}
+        {}
       }
       return event.request
     }

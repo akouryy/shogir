@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 5.37"
     }
   }
@@ -12,7 +12,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project = "shogir"
+      Project   = "shogir"
       Terraform = "true"
     }
   }

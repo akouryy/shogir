@@ -4,8 +4,8 @@ resource "aws_cloudfront_distribution" "shogir_cloudfront_distribution" {
   price_class = "PriceClass_200"
 
   origin {
-    domain_name              = aws_s3_bucket.shogir_s3_bucket.bucket_regional_domain_name
-    origin_id                = aws_s3_bucket.shogir_s3_bucket.id
+    domain_name              = aws_s3_bucket.shogir_front_s3_bucket.bucket_regional_domain_name
+    origin_id                = aws_s3_bucket.shogir_front_s3_bucket.id
     origin_access_control_id = aws_cloudfront_origin_access_control.shogir_cloudfront_oac.id
   }
 
@@ -14,7 +14,7 @@ resource "aws_cloudfront_distribution" "shogir_cloudfront_distribution" {
   }
 
   default_cache_behavior {
-    target_origin_id       = aws_s3_bucket.shogir_s3_bucket.id
+    target_origin_id       = aws_s3_bucket.shogir_front_s3_bucket.id
     viewer_protocol_policy = "https-only" # TODO: redirect-to-https も検討する
     cached_methods         = ["GET", "HEAD"]
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
@@ -43,7 +43,7 @@ resource "aws_cloudfront_function" "shogir_cloudfront_spa_function" {
   code = <<-JS
     function handler(event) {
       if (event.request.method === 'GET') {
-    %{for file, _ in module.shogir_s3_files.files~}
+    %{for file, _ in module.shogir_front_s3_files.files~}
     %{if file == "index.html" || endswith(file, "/index.html")~}
         if (/\A\/${
   replace(

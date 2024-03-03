@@ -3,4 +3,5 @@ ignorePatterns:
   - /next.config.js
   - /next-env.d.ts
 root: true
-# rules:
+rules:
+  "@typescript-eslint/strict-boolean-expressions": off

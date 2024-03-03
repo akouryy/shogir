@@ -7,8 +7,9 @@ const PageIndex: React.FC = () => {
 
   return (
     <BasePage>
-      Hello, world!
-      {cognitoIdToken?.getJwtToken()}
+      <code className='break-all'>
+        {cognitoIdToken?.getJwtToken()}
+      </code>
     </BasePage>
   )
 }

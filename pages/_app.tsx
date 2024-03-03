@@ -2,8 +2,7 @@ import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import 'modern-normalize'
-import '../styles/all.sass'
+import '../styles/all.css'
 import { ShogirContext } from '../contexts/ShogirContext'
 
 export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {

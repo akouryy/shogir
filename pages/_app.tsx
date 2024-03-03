@@ -3,6 +3,7 @@ import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import '../styles/all.css'
+import { BasePage } from '../components/BasePage'
 import { ShogirContext } from '../contexts/ShogirContext'
 
 export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
@@ -40,7 +41,9 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 
   return (
     <ShogirContext.Provider value={{ cognitoIdToken, cognitoUserPool, setCognitoIdToken }}>
-      <Component {...pageProps} />
+      <BasePage>
+        <Component {...pageProps} />
+      </BasePage>
     </ShogirContext.Provider>
   )
 }

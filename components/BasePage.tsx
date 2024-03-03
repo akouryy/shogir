@@ -1,15 +1,9 @@
-import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useContext, useState } from 'react'
 import { ShogirContext } from '../contexts/ShogirContext'
 
-interface P {
-  children: React.ReactNode
-  title?: string
-}
-
-export const BasePage: React.FC<P> = ({ children, title }) => {
+export const BasePage: React.FC<React.PropsWithChildren> = ({ children }) => {
   const router = useRouter()
 
   const { cognitoUserPool } = useContext(ShogirContext)
@@ -28,10 +22,6 @@ export const BasePage: React.FC<P> = ({ children, title }) => {
 
   return (
     <div className='flex flex-col h-dvh'>
-      <Head>
-        <title>{title !== undefined ? `${title} - shogir` : 'shogir'}</title>
-      </Head>
-
       <header className='navbar bg-neutral min-h-8 text-neutral-content'>
         <Link className='flex-1 text-3xl' href='/'>shogir</Link>
 

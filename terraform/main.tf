@@ -18,6 +18,5 @@ provider "aws" {
   }
 }
 
-variable "shogir_initial_cognito_user_username" {}
 variable "shogir_initial_cognito_user_email" {}
 variable "shogir_initial_cognito_user_password" {}

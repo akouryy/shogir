@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+const { iconsPlugin, getIconCollections } = require('@egoist/tailwindcss-icons')
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 /** @type {import('tailwindcss').Config} */
@@ -17,7 +18,7 @@ module.exports = {
       },
     ],
   },
-  plugins: [require('daisyui')],
+  plugins: [iconsPlugin({ collections: getIconCollections(['heroicons', 'lucide']) }), require('daisyui')],
   theme: {
     extend: {
       fontFamily: {

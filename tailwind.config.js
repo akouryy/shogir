@@ -18,7 +18,7 @@ module.exports = {
       },
     ],
   },
-  plugins: [iconsPlugin({ collections: getIconCollections(['heroicons', 'lucide']) }), require('daisyui')],
+  plugins: [iconsPlugin({ collections: getIconCollections(['heroicons', 'lucide', 'mdi']) }), require('daisyui')],
   theme: {
     extend: {
       fontFamily: {

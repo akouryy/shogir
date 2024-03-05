@@ -3,7 +3,12 @@ import { useRouter } from 'next/router'
 import React, { useContext, useState } from 'react'
 import { ShogirContext } from '../contexts/ShogirContext'
 
-export const BasePage: React.FC<React.PropsWithChildren> = ({ children }) => {
+type P = React.PropsWithChildren<{
+  hasUnsavedChanges: boolean
+  isSavingWork: boolean
+}>
+
+export const BasePage: React.FC<P> = ({ children, hasUnsavedChanges, isSavingWork }) => {
   const router = useRouter()
 
   const { cognitoUserPool } = useContext(ShogirContext)
@@ -23,17 +28,28 @@ export const BasePage: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
     <div className='flex flex-col h-dvh'>
       <header className='navbar bg-neutral min-h-8 text-neutral-content'>
-        <Link className='flex-1 text-3xl' href='/'>shogir</Link>
+        <Link className='flex-1 text-3xl' href='/'>☗shogir</Link>
 
         <div className='flex-none'>
           {cognitoUserPool?.getCurrentUser() && (
-            <button className='btn btn-sm btn-ghost' onClick={signOut} type='button'>
-              {signingOut ? (
-                <span className='loading loading-spinner' />
-              ) : (
-                <span className='i-lucide-log-out h-6 w-6' />
-              )}
-            </button>
+            <>
+              <div className='btn btn-sm btn-ghost cursor-auto'>
+                {isSavingWork ? (
+                  <span className='loading loading-spinner' />
+                ) : hasUnsavedChanges ? (
+                  <span className='i-mdi-cloud-upload h-6 w-6' />
+                ) : (
+                  <span className='i-mdi-cloud-check-variant h-6 w-6' />
+                )}
+              </div>
+              <button className='btn btn-sm btn-ghost' onClick={signOut} type='button'>
+                {signingOut ? (
+                  <span className='loading loading-spinner' />
+                ) : (
+                  <span className='i-lucide-log-out h-6 w-6' />
+                )}
+              </button>
+            </>
           )}
         </div>
       </header>

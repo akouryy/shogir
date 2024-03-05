@@ -4,5 +4,6 @@ import { createContext } from 'react'
 export const ShogirContext = createContext<{
   cognitoIdToken?: CognitoIdToken,
   cognitoUserPool?: CognitoUserPool,
+  work?: string,
   setCognitoIdToken?: (token: CognitoIdToken) => void,
 }>({})

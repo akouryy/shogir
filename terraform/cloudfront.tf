@@ -43,9 +43,7 @@ resource "aws_cloudfront_function" "shogir_cloudfront_spa_function" {
   code = <<-JS
     function handler(event) {
       if (event.request.method === 'GET') {
-    %{for file, _ in module.shogir_front_s3_files.files~}
-    %{if file == "index.html" || endswith(file, "/index.html")~}
-        if (/\A\/${
+        %{for file, _ in module.shogir_front_s3_files.files}%{if file == "index.html" || endswith(file, "/index.html")}if (/\A\/${
   replace(
     replace(
       replace(file, "/\\/?index\\.html\\z/", "/?"),
@@ -55,10 +53,7 @@ resource "aws_cloudfront_function" "shogir_cloudfront_spa_function" {
   )
 }\z/.test(event.request.uri)) {
           event.request.uri = "/${file}"
-        } else
-    %{endif~}
-    %{endfor~}
-        {}
+        } else %{endif}%{endfor}{}
       }
       return event.request
     }

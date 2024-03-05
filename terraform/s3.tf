@@ -4,24 +4,7 @@ resource "aws_s3_bucket" "shogir_front_s3_bucket" {
 
 resource "aws_s3_bucket_policy" "shogir_front_s3_bucket_policy" {
   bucket = aws_s3_bucket.shogir_front_s3_bucket.id
-  policy = data.aws_iam_policy_document.shogir_front_s3_read_policy.json
-}
-data "aws_iam_policy_document" "shogir_front_s3_read_policy" {
-  statement {
-    sid    = "ShogirAllowCloudFrontRead"
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
-    }
-    actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.shogir_front_s3_bucket.arn}/*"]
-    condition {
-      test     = "StringEquals"
-      variable = "aws:SourceArn"
-      values   = [aws_cloudfront_distribution.shogir_cloudfront_distribution.arn]
-    }
-  }
+  policy = data.aws_iam_policy_document.shogir_front_s3_read_iam_policy_document.json
 }
 
 resource "aws_s3_object" "shogir_front_s3_files_upload" {
@@ -37,4 +20,20 @@ resource "aws_s3_object" "shogir_front_s3_files_upload" {
 module "shogir_front_s3_files" {
   source   = "hashicorp/dir/template"
   base_dir = "${path.module}/../out"
+}
+
+resource "aws_s3_bucket" "shogir_workspace_s3_bucket" {
+  bucket = "shogir-workspace"
+}
+
+resource "aws_s3_bucket_cors_configuration" "shogir_workspace_s3_bucket_cors_configuration" {
+  bucket = aws_s3_bucket.shogir_workspace_s3_bucket.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["HEAD", "GET", "PUT", "POST"]
+    allowed_origins = ["http://localhost:44051", "https://shogir.pyon.app"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
 }

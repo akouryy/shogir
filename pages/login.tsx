@@ -50,15 +50,15 @@ const PageIndex: React.FC = () => {
   }
 
   return (
-    <form className='max-w-md w-full flex flex-col gap-4 items-stretch' onSubmit={handleSubmit}>
+    <form className='flex w-full max-w-md flex-col items-stretch gap-4' onSubmit={handleSubmit}>
       {error && (<div className='alert alert-error' role='alert'>{error}</div>)}
 
-      <label className='input input-bordered has-[:invalid]:input-error flex items-center gap-2'>
-        <span className='i-heroicons-envelope-solid h-4 w-4 opacity-70' />
+      <label className='input input-bordered flex items-center gap-2 has-[:invalid]:input-error'>
+        <span className='i-heroicons-envelope-solid size-4 opacity-70' />
         <input className='grow' onChange={(e) => setName(e.target.value)} required type='email' value={name} />
       </label>
       <label className='input input-bordered flex items-center gap-2'>
-        <span className='i-heroicons-key-solid h-4 w-4 opacity-70' />
+        <span className='i-heroicons-key-solid size-4 opacity-70' />
         <input className='grow' onChange={(e) => setPassword(e.target.value)} required type='password' value={password} />
       </label>
       <button className='btn btn-primary' disabled={!submittable} type='submit'>

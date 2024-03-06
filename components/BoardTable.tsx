@@ -16,7 +16,7 @@ export const BoardTable: React.FC<P> = ({ board }) => {
           const piece = board.pieces.find((piece) => !piece.stand && piece.row === row && piece.column === column)
 
           return (
-            <div className={'aspect-square h-6 w-6 shadow'} key={`${row}-${column}`}>
+            <div className={'aspect-square size-6 shadow'} key={`${row}-${column}`}>
               {piece && (
                 <div className={clsx('text-center', piece.player === '後手' && 'rotate-180')}>
                   {ShortPieceKindText(piece)}

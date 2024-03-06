@@ -27,8 +27,8 @@ export const BasePage: React.FC<P> = ({ children, errorDecodingWork, hasUnsavedC
   }
 
   return (
-    <div className='flex flex-col h-dvh'>
-      <header className='navbar bg-neutral h-10 min-h-10 text-neutral-content'>
+    <div className='flex h-dvh flex-col'>
+      <header className='navbar h-10 min-h-10 bg-neutral text-neutral-content'>
         <Link className='flex-1 text-3xl' href='/'>☗shogir</Link>
 
         {errorDecodingWork && (
@@ -40,20 +40,20 @@ export const BasePage: React.FC<P> = ({ children, errorDecodingWork, hasUnsavedC
         <div className='flex-none'>
           {cognitoUserPool?.getCurrentUser() && (
             <>
-              <div className='btn btn-sm btn-ghost cursor-auto'>
+              <div className='btn btn-ghost btn-sm cursor-auto'>
                 {isSavingWork ? (
                   <span className='loading loading-spinner' />
                 ) : hasUnsavedChanges ? (
-                  <span className='i-mdi-cloud-upload h-6 w-6' />
+                  <span className='i-mdi-cloud-upload size-6' />
                 ) : (
-                  <span className='i-mdi-cloud-check-variant h-6 w-6' />
+                  <span className='i-mdi-cloud-check-variant size-6' />
                 )}
               </div>
-              <button className='btn btn-sm btn-ghost' onClick={signOut} type='button'>
+              <button className='btn btn-ghost btn-sm' onClick={signOut} type='button'>
                 {signingOut ? (
                   <span className='loading loading-spinner' />
                 ) : (
-                  <span className='i-lucide-log-out h-6 w-6' />
+                  <span className='i-lucide-log-out size-6' />
                 )}
               </button>
             </>
@@ -61,7 +61,7 @@ export const BasePage: React.FC<P> = ({ children, errorDecodingWork, hasUnsavedC
         </div>
       </header>
 
-      <main className='flex-1 flex flex-col items-center justify-center p-4'>
+      <main className='flex flex-1 flex-col items-center justify-center p-4'>
         {children}
       </main>
     </div>

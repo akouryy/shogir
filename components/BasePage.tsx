@@ -4,11 +4,12 @@ import React, { useContext, useState } from 'react'
 import { ShogirContext } from '../contexts/ShogirContext'
 
 type P = React.PropsWithChildren<{
+  errorDecodingWork: string | undefined
   hasUnsavedChanges: boolean
   isSavingWork: boolean
 }>
 
-export const BasePage: React.FC<P> = ({ children, hasUnsavedChanges, isSavingWork }) => {
+export const BasePage: React.FC<P> = ({ children, errorDecodingWork, hasUnsavedChanges, isSavingWork }) => {
   const router = useRouter()
 
   const { cognitoUserPool } = useContext(ShogirContext)
@@ -27,8 +28,14 @@ export const BasePage: React.FC<P> = ({ children, hasUnsavedChanges, isSavingWor
 
   return (
     <div className='flex flex-col h-dvh'>
-      <header className='navbar bg-neutral min-h-8 text-neutral-content'>
+      <header className='navbar bg-neutral h-10 min-h-10 text-neutral-content'>
         <Link className='flex-1 text-3xl' href='/'>☗shogir</Link>
+
+        {errorDecodingWork && (
+          <div className='alert alert-error' role='alert'>
+            {errorDecodingWork}
+          </div>
+        )}
 
         <div className='flex-none'>
           {cognitoUserPool?.getCurrentUser() && (

@@ -1,14 +1,20 @@
 import React, { useContext } from 'react'
+import { BoardTable } from '../components/BoardTable'
 import { ShogirContext } from '../contexts/ShogirContext'
 
 const PageIndex: React.FC = () => {
-  const { cognitoIdToken, work } = useContext(ShogirContext)
+  const { work } = useContext(ShogirContext)
 
   return (
-    <code className='break-all'>
-      {cognitoIdToken?.getJwtToken()}
-      {work}
-    </code>
+    <>
+      {work?.[0] && (
+        <BoardTable board={work[0][0]} />
+      )}
+
+      <code className='break-all'>
+        {JSON.stringify(work)}
+      </code>
+    </>
   )
 }
 

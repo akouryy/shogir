@@ -78,7 +78,7 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 
   useDebounce(() => {
     if(work === undefined) { return }
-    if(!isEqual(work, savedWork)) { return }
+    if(isEqual(work, savedWork)) { return }
     if(isSavingWork) {
       // アップロードは、次に syncing が false になった際のコールバックに任せる
       return

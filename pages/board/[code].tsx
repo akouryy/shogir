@@ -1,11 +1,27 @@
+import { fold } from 'fp-ts/lib/Either'
+import { pipe } from 'fp-ts/lib/function'
+import { useRouter } from 'next/router'
 import React from 'react'
+import { BoardTable } from '../../components/BoardTable'
+import { IOBoard } from '../../lib/model/ioBoard'
 
-const PageIndex: React.FC = () => {
+const PageBoardCode: React.FC = () => {
+  const router = useRouter()
+  const { code } = router.query as { code: string }
+
+  const maybeBoard = IOBoard.decode(code)
+
   return (
     <>
-      Board
+      {pipe(
+        maybeBoard,
+        fold(
+          (errors) => <div className='alert alert-error'>{errors.toString()}</div>,
+          (board) => <BoardTable board={board} />,
+        ),
+      )}
     </>
   )
 }
 
-export default PageIndex
+export default PageBoardCode

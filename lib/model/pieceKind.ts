@@ -28,3 +28,28 @@ export function LongPieceKindText(pieceKind: PieceKind): string {
     return pieceKind.basicPieceKind
   }
 }
+
+export function pointMovePotentials(pieceKind: PieceKind): ReadonlyArray<[number, number]> {
+  const goldMoves: ReadonlyArray<[number, number]> = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, 0]]
+
+  switch (pieceKind.basicPieceKind) {
+  case '歩': return pieceKind.isPromoted ? goldMoves : [[-1, 0]]
+  case '香': return pieceKind.isPromoted ? goldMoves : []
+  case '桂': return pieceKind.isPromoted ? goldMoves : [[-2, -1], [-2, 1]]
+  case '銀': return pieceKind.isPromoted ? goldMoves : [[-1, -1], [-1, 0], [-1, 1], [1, -1], [1, 1]]
+  case '金': return goldMoves
+  case '角': return pieceKind.isPromoted ? [[-1, 0], [0, -1], [0, 1], [1, 0]] : []
+  case '飛': return pieceKind.isPromoted ? [[-1, -1], [-1, 1], [1, -1], [1, 1]] : []
+  case '玉': return [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+  default: throw new Error()
+  }
+}
+
+export function straightMovePotentials(pieceKind: PieceKind): ReadonlyArray<[number, number]> {
+  switch (pieceKind.basicPieceKind) {
+  case '香': return pieceKind.isPromoted ? [] : [[-1, 0]]
+  case '角': return [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+  case '飛': return [[-1, 0], [0, -1], [0, 1], [1, 0]]
+  default: return []
+  }
+}

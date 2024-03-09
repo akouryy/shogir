@@ -32,7 +32,11 @@ resource "aws_s3_bucket_cors_configuration" "shogir_workspace_s3_bucket_cors_con
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["HEAD", "GET", "PUT", "POST"]
-    allowed_origins = ["http://localhost:44051", "https://shogir.pyon.app"]
+    allowed_origins = [
+      "http://localhost:44051",
+      "https://shogir.pyon.app",
+      "https://${aws_cloudfront_distribution.shogir_cloudfront_distribution.domain_name}",
+    ]
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }

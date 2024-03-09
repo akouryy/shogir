@@ -13,7 +13,8 @@ resource "aws_cognito_user_pool" "shogir_cognito_user_pool" {
     allow_admin_create_user_only = true
   }
   password_policy {
-    minimum_length = 16
+    minimum_length                   = 16
+    temporary_password_validity_days = 7
   }
 }
 

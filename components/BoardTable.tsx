@@ -43,8 +43,8 @@ export const BoardTable: React.FC<P> = ({ board, nextPreviewBoard }) => {
             'flex',
             row === 0 && 'border-t-4',
             row === 8 && 'border-b-4',
-            board.turn === '先手' && row === 8 ? 'border-b-black' : 'border-b-transparent',
-            board.turn === '後手' && row === 0 ? 'border-t-black' : 'border-t-transparent',
+            board.turn === '先手' && row === 8 ? 'border-b-neutral-300' : 'border-b-transparent',
+            board.turn === '後手' && row === 0 ? 'border-t-neutral-300' : 'border-t-transparent',
           )}
           key={row}
         >

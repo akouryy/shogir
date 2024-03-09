@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { isEqual } from 'lodash'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { Board } from '../lib/model/board'
@@ -26,7 +27,7 @@ export const BoardCell: React.FC<P> = ({ board, location, moveCandidates, nextPr
       className={clsx(
         'aspect-square size-8',
         !location.stand && 'shadow',
-        nextPreviewPieces !== undefined && pieces.length < nextPreviewPieces.length && 'text-accent',
+        nextPreviewPieces !== undefined && !isEqual(pieces, nextPreviewPieces) && 'text-accent',
         nextPreviewPieces !== undefined && pieces.length > nextPreviewPieces.length && 'bg-accent',
         movingState.piece && isSameDetailedPieceLocation(movingState.piece, location) ?
           'bg-primary/20' :

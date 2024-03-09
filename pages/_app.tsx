@@ -41,9 +41,9 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       return
     }
 
-    cognitoUser.getSession((err: Error | null, session: AmazonCognitoIdentity.CognitoUserSession | null) => {
-      if(err || !session) {
-        console.error(err)
+    cognitoUser.getSession((sessionError: Error | null, session: AmazonCognitoIdentity.CognitoUserSession | null) => {
+      if(sessionError || !session) {
+        console.error(sessionError)
         void router.push('/login')
         return
       }
@@ -57,19 +57,19 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       })
       AWS.config.credentials = credentials
 
-      credentials.refresh(async (err?: AWS.AWSError | null) => {
-        if(err) {
-          setErrorDecodingWork(err.message)
-          console.error(err)
+      credentials.refresh(async (credentialsError?: AWS.AWSError | null) => {
+        if(credentialsError) {
+          setErrorDecodingWork(credentialsError.message)
+          console.error(credentialsError)
         } else {
           try {
-            const work = await loadWork(credentials)
-            setWork(work)
-            setSavedWork(work)
-          } catch (err) {
+            const loadedWork = await loadWork(credentials)
+            setWork(loadedWork)
+            setSavedWork(loadedWork)
+          } catch (s3Error) {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            setErrorDecodingWork(err instanceof Error ? err.message : `${err}`)
-            console.error(err)
+            setErrorDecodingWork(s3Error instanceof Error ? s3Error.message : `${s3Error}`)
+            console.error(s3Error)
           }
         }
       })

@@ -13,16 +13,22 @@ export function invertPlayer(player: Player): Player {
   return player === '先手' ? '後手' : '先手'
 }
 
-export interface BoardLocation { player: Player, stand: false, row: number, column: number }
+export interface BoardLocation { stand: false, row: number, column: number }
 export type PieceLocation = BoardLocation | { player: Player, stand: true }
 export interface DetailedStandLocation { player: Player, stand: true, basicPieceKind: BasicPieceKind }
 export type DetailedPieceLocation = BoardLocation | DetailedStandLocation
+
+export function isSameDetailedPieceLocation(a: DetailedPieceLocation, b: DetailedPieceLocation): boolean {
+  return a.stand ?
+    b.stand && a.player === b.player && a.basicPieceKind === b.basicPieceKind :
+    !b.stand && a.row === b.row && a.column === b.column
+}
 
 export function isValidBoardLocation(location: Pick<BoardLocation, 'row' | 'column'>): boolean {
   return 0 <= location.row && location.row <= 8 && 0 <= location.column && location.column <= 8
 }
 
-export type Piece = PieceKind & PieceLocation
+export type Piece = PieceKind & PieceLocation & { player: Player }
 
 export const PieceOrdByKind = [
   contramap((piece: Piece) => BasicPieceKindIndices[piece.basicPieceKind])(N.Ord),

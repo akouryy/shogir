@@ -4,9 +4,10 @@ import { pipe } from 'fp-ts/lib/function'
 import { isEqual } from 'lodash'
 import { typedEntries } from '../util'
 import {
-  MoveDestination, Piece, Player, Players, invertPlayer, isValidBoardLocation, isValidPromotionChange,
+  DetailedPieceLocation,
+  MoveDestination, Piece, Player, PlayerIndices, Players, invertPlayer, isValidBoardLocation, isValidPromotionChange,
 } from './piece'
-import { BasicPieceKind, BasicPieceKinds, pointMovePotentials, straightMovePotentials } from './pieceKind'
+import { BasicPieceKind, BasicPieceKindIndices, BasicPieceKinds, pointMovePotentials, straightMovePotentials } from './pieceKind'
 
 export class Board {
   static readonly PieceCounts: Record<BasicPieceKind, number> = {
@@ -39,6 +40,12 @@ export class Board {
     )
   }
 
+  pieceAt(location: DetailedPieceLocation): Piece | undefined {
+    return location.stand ?
+      this.piecesByDetailedStandLocation[PlayerIndices[location.player]][BasicPieceKindIndices[location.basicPieceKind]][0] :
+      this.pieceByBoardLocation[location.row][location.column]
+  }
+
   /**
    * @param ignoreMineOrStuck 自分の駒、およびそれ以上動けない地点を無視する。「それ以上動けない地点」自体の判定に用いる際true。
    */
@@ -53,7 +60,7 @@ export class Board {
       } satisfies MoveDestination))).filter(({ row, column }) => (
         isValidBoardLocation({ row, column }) && (
           ignoreMineOrStuck ||
-          this.pieceByBoardLocation[row][column]?.player !== selectedPiece.player &&
+          this.pieceByBoardLocation[row][column] === undefined &&
           this.moveCandidates({ ...selectedPiece, stand: false, row, column }, { ignoreMineOrStuck: true }).length > 0
         )
       ))

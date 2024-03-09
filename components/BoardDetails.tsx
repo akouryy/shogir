@@ -81,7 +81,7 @@ export const BoardDetails: React.FC<P> = ({ board }) => {
           {sortBy(registeredMoveOrd(work))(moves).map(({ piece, destination, newCode }) => work && (
             <li className='' key={shortMoveText(piece, destination)}>
               <Link
-                className='link-primary mr-4'
+                className='link-hover link-primary mr-4'
                 href={`/board/${newCode}`}
                 // eslint-disable-next-line react/jsx-no-bind
                 onMouseEnter={() => setNextPreviewBoard(board.movePiece(piece, destination))}
@@ -91,18 +91,29 @@ export const BoardDetails: React.FC<P> = ({ board }) => {
                 {shortMoveText(piece, destination)}
               </Link>
               <Rating readOnly size='sm' workEntry={[newCode, work[newCode]]} />
-              {bestMoveTimeline(10, work, board.movePiece(piece, destination)).map((timelineMove, i) => (
+              {bestMoveTimeline(10, work, board.movePiece(piece, destination)).map((timelineItem, i) => (
                 <Link
-                  className='ml-4'
-                  href={`/board/${timelineMove.newCode}`}
+                  className='link-hover ml-4'
+                  href={`/board/${timelineItem.newCode}`}
                   // eslint-disable-next-line react/no-array-index-key
                   key={i}
+                  // eslint-disable-next-line react/jsx-no-bind
+                  onMouseEnter={() => setNextPreviewBoard(timelineItem.board)}
+                  // eslint-disable-next-line react/jsx-no-bind
+                  onMouseLeave={() => setNextPreviewBoard(undefined)}
                 >
-                  {shortMoveText(timelineMove.piece, timelineMove.destination)}
+                  {shortMoveText(timelineItem.piece, timelineItem.destination)}
                 </Link>
               ))}
               <p>
-                {work?.[newCode]?.comment}
+                {
+                  [
+                    newCode,
+                    ...bestMoveTimeline(10, work, board.movePiece(piece, destination)).map((timelineItem) => timelineItem.newCode),
+                  ]
+                    .map((c) => work?.[c]?.comment)
+                    .find((c) => c !== '')
+                }
               </p>
             </li>
           ))}

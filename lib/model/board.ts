@@ -50,6 +50,8 @@ export class Board {
    * @param ignoreMineOrStuck 自分の駒、およびそれ以上動けない地点を無視する。「それ以上動けない地点」自体の判定に用いる際true。
    */
   moveCandidates(selectedPiece: Piece, { ignoreMineOrStuck = false } = {}): MoveDestination[] {
+    if(selectedPiece.player !== this.turn) { return [] }
+
     const playerCoefficient = selectedPiece.player === '先手' ? 1 : -1
 
     if(selectedPiece.stand) {

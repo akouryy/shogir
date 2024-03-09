@@ -46,7 +46,7 @@ export function registeredMoveOrd(work: Work | undefined): Array<Ord<RegisteredM
   ]
 }
 
-export function bestMoveTimeline(count: number, work: Work, board: Board): RegisteredMove[] {
+export function bestMoveTimeline(count: number, work: Work, board: Board): Array<RegisteredMove & { board: Board }> {
   const ret = []
   let currentBoard = board
 
@@ -54,8 +54,8 @@ export function bestMoveTimeline(count: number, work: Work, board: Board): Regis
     const moves = registeredMoves(currentBoard, work)
     if(moves.length === 0) { break }
     const bestMove = sortBy(registeredMoveOrd(work))(moves)[0]
-    ret.push(bestMove)
     currentBoard = currentBoard.movePiece(bestMove.piece, bestMove.destination)
+    ret.push({ ...bestMove, board: currentBoard })
   }
 
   return ret

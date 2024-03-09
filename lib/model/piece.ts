@@ -1,6 +1,5 @@
 import * as B from 'fp-ts/boolean'
-import { concatAll } from 'fp-ts/lib/Monoid'
-import { contramap, getMonoid } from 'fp-ts/lib/Ord'
+import { contramap } from 'fp-ts/lib/Ord'
 import * as N from 'fp-ts/number'
 import { typedFromEntries } from '../util'
 import { BasicPieceKind, BasicPieceKindIndices, PieceKind, longPieceKindText } from './pieceKind'
@@ -25,14 +24,14 @@ export function isValidBoardLocation(location: Pick<BoardLocation, 'row' | 'colu
 
 export type Piece = PieceKind & PieceLocation
 
-export const PieceOrdByKind = concatAll(getMonoid<Piece>())([
+export const PieceOrdByKind = [
   contramap((piece: Piece) => BasicPieceKindIndices[piece.basicPieceKind])(N.Ord),
   contramap((piece: Piece) => PlayerIndices[piece.player])(N.Ord),
   contramap((piece: Piece) => piece.stand)(B.Ord),
   contramap((piece: Piece) => piece.stand ? 0 : piece.row)(N.Ord),
   contramap((piece: Piece) => piece.stand ? 0 : piece.column)(N.Ord),
   contramap((piece: Piece) => piece.isPromoted)(B.Ord),
-])
+]
 
 export interface MoveDestination {
   isPromoted: boolean,

@@ -26,7 +26,7 @@ function encodePieceWithoutBasicPieceKind(piece: Piece): string {
 }
 
 export function encode(board: Board): string {
-  const pieces = sortBy([PieceOrdByKind])(board.pieces)
+  const pieces = sortBy(PieceOrdByKind)(board.pieces)
   return [...pieces.map(encodePieceWithoutBasicPieceKind), BTOA[PlayerIndices[board.turn]]].join('')
 }
 

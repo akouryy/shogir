@@ -8,6 +8,7 @@ import { BoardTableStand } from './BoardTableStand'
 
 interface P {
   board: Board
+  nextPreviewBoard?: Board
 }
 
 export type MovingState =
@@ -15,7 +16,7 @@ export type MovingState =
   | { type: 'moving', piece: Piece }
   // | { type: 'askingPromotion', piece: Piece, destination: { row: number, column: number } }
 
-export const BoardTable: React.FC<P> = ({ board }) => {
+export const BoardTable: React.FC<P> = ({ board, nextPreviewBoard }) => {
   const [movingState, setMovingState] = useState<MovingState>({ type: 'none' })
 
   const moveCandidates = useMemo(() => {
@@ -28,7 +29,13 @@ export const BoardTable: React.FC<P> = ({ board }) => {
 
   return (
     <div className='text-2xl leading-none'>
-      <BoardTableStand board={board} movingState={movingState} player='後手' setMovingState={setMovingState} />
+      <BoardTableStand
+        board={board}
+        movingState={movingState}
+        nextPreviewBoard={nextPreviewBoard}
+        player='後手'
+        setMovingState={setMovingState}
+      />
 
       {range(0, 8).map((row) => (
         <div
@@ -48,13 +55,20 @@ export const BoardTable: React.FC<P> = ({ board }) => {
               location={{ stand: false, row, column }}
               moveCandidates={moveCandidates}
               movingState={movingState}
+              nextPreviewBoard={nextPreviewBoard}
               setMovingState={setMovingState}
             />
           ))}
         </div>
       ))}
 
-      <BoardTableStand board={board} movingState={movingState} player='先手' setMovingState={setMovingState} />
+      <BoardTableStand
+        board={board}
+        movingState={movingState}
+        nextPreviewBoard={nextPreviewBoard}
+        player='先手'
+        setMovingState={setMovingState}
+      />
     </div>
   )
 }

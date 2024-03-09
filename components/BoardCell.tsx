@@ -1,11 +1,10 @@
 import clsx from 'clsx'
-import { pipe } from 'fp-ts/lib/function'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { Board } from '../lib/model/board'
 import { IOBoard } from '../lib/model/ioBoard'
-import { DetailedPieceLocation, MoveDestination, PlayerIndices, isSameDetailedPieceLocation } from '../lib/model/piece'
-import { BasicPieceKindIndices, shortPieceKindText } from '../lib/model/pieceKind'
+import { DetailedPieceLocation, MoveDestination, isSameDetailedPieceLocation } from '../lib/model/piece'
+import { shortPieceKindText } from '../lib/model/pieceKind'
 import { MovingState } from './BoardTable'
 
 interface P {
@@ -13,18 +12,22 @@ interface P {
   location: DetailedPieceLocation
   moveCandidates: MoveDestination[]
   movingState: MovingState
+  nextPreviewBoard: Board | undefined
   setMovingState: React.Dispatch<React.SetStateAction<MovingState>>
 }
 
-export const BoardCell: React.FC<P> = ({ board, location, moveCandidates, movingState, setMovingState }) => {
+export const BoardCell: React.FC<P> = ({ board, location, moveCandidates, nextPreviewBoard, movingState, setMovingState }) => {
   const router = useRouter()
-  const piece = board.pieceAt(location)
+  const pieces = board.piecesAt(location)
+  const nextPreviewPieces = nextPreviewBoard?.piecesAt(location)
 
   return (
     <div
       className={clsx(
         'aspect-square size-8',
         !location.stand && 'shadow',
+        nextPreviewPieces !== undefined && pieces.length < nextPreviewPieces.length && 'text-accent',
+        nextPreviewPieces !== undefined && pieces.length > nextPreviewPieces.length && 'bg-accent',
         movingState.piece && isSameDetailedPieceLocation(movingState.piece, location) ?
           'bg-primary/20' :
           !location.stand &&
@@ -34,12 +37,15 @@ export const BoardCell: React.FC<P> = ({ board, location, moveCandidates, moving
       )}
     >
       <button
-        className={clsx('relative size-full text-center align-middle', piece?.player === '後手' && 'rotate-180')}
+        className={clsx(
+          'relative size-full text-center align-middle',
+          (nextPreviewPieces?.[0] ?? pieces[0])?.player === '後手' && 'rotate-180',
+        )}
         onClick={() => {
           if(movingState.piece && isSameDetailedPieceLocation(movingState.piece, location)) {
             setMovingState({ type: 'none' })
-          } else if(piece?.player === board.turn) {
-            setMovingState({ type: 'moving', piece })
+          } else if(pieces[0]?.player === board.turn) {
+            setMovingState({ type: 'moving', piece: pieces[0] })
           } else if(movingState.piece && !location.stand) {
             const destinations = moveCandidates.filter((destination) => (
               isSameDetailedPieceLocation({ stand: false, ...destination }, location)
@@ -58,16 +64,11 @@ export const BoardCell: React.FC<P> = ({ board, location, moveCandidates, moving
           }
         }}
       >
-        {piece && shortPieceKindText(piece)}
-        {location.stand && pipe(
-          board.piecesByDetailedStandLocation[PlayerIndices[location.player]][BasicPieceKindIndices[location.basicPieceKind]].length,
-          (pieceCount) => (
-            pieceCount >= 2 && (
-              <div className='absolute -right-1 bottom-0 text-base font-bold text-primary'>
-                {pieceCount}
-              </div>
-            )
-          ),
+        {nextPreviewPieces?.[0] ? shortPieceKindText(nextPreviewPieces[0]) : pieces[0] && shortPieceKindText(pieces[0])}
+        {location.stand && pieces.length >= 2 && (
+          <div className='absolute -right-1 bottom-0 text-base font-bold text-primary'>
+            {pieces.length}
+          </div>
         )}
       </button>
     </div>

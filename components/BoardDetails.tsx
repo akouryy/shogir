@@ -4,7 +4,7 @@ import { pipe } from 'fp-ts/lib/function'
 import * as N from 'fp-ts/number'
 import * as S from 'fp-ts/string'
 import Link from 'next/link'
-import React, { useCallback, useContext, useMemo } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ShogirContext } from '../contexts/ShogirContext'
 import { Board } from '../lib/model/board'
 import { IOBoard, InitialBoardCode } from '../lib/model/ioBoard'
@@ -22,6 +22,8 @@ interface RegisteredMove { piece: Piece, destination: MoveDestination, newCode: 
 export const BoardDetails: React.FC<P> = ({ board }) => {
   const { setWork, work } = useContext(ShogirContext)
 
+  const [nextPreviewBoard, setNextPreviewBoard] = useState<Board>()
+
   const code = useMemo(() => IOBoard.encode(board), [board])
 
   const registeredMoves: RegisteredMove[] = useMemo(() => {
@@ -34,6 +36,11 @@ export const BoardDetails: React.FC<P> = ({ board }) => {
       ))
       .filter(({ newCode }) => work[newCode])
   }, [board, work])
+
+  const registeredMoveOrd = [
+    reverse(contramap((move: RegisteredMove) => work?.[move.newCode]?.rating ?? -1)(N.Ord)),
+    contramap((move: RegisteredMove) => move.newCode)(S.Ord),
+  ]
 
   const updateComment = (ev: React.ChangeEvent<HTMLTextAreaElement>): void => {
     setWork?.((work) =>
@@ -58,15 +65,12 @@ export const BoardDetails: React.FC<P> = ({ board }) => {
     })
   }
 
-  const registeredMoveOrd = [
-    reverse(contramap((move: RegisteredMove) => work?.[move.newCode]?.rating ?? -1)(N.Ord)),
-    contramap((move: RegisteredMove) => move.newCode)(S.Ord),
-  ]
+  useEffect(function resetNextPreviewBoardOnBoardChange() { setNextPreviewBoard(undefined) }, [board])
 
   return (
     <div className='flex size-full'>
       <div className='flex flex-col'>
-        <BoardTable board={board} />
+        <BoardTable board={board} nextPreviewBoard={nextPreviewBoard} />
         {work ? work?.[code] ? pipe(work[code], (currentWork) => (
           <>
             <Rating updateRating={updateRating} workEntry={[code, currentWork]} />
@@ -94,7 +98,14 @@ export const BoardDetails: React.FC<P> = ({ board }) => {
         <ul className='list-disc'>
           {sortBy(registeredMoveOrd)(registeredMoves).map(({ piece, destination, newCode }) => work && (
             <li className='' key={shortMoveText(piece, destination)}>
-              <Link className='link link-primary mr-4' href={`/board/${newCode}`}>
+              <Link
+                className='link link-primary mr-4'
+                href={`/board/${newCode}`}
+                // eslint-disable-next-line react/jsx-no-bind
+                onMouseEnter={() => setNextPreviewBoard(board.movePiece(piece, destination))}
+                // eslint-disable-next-line react/jsx-no-bind
+                onMouseLeave={() => setNextPreviewBoard(undefined)}
+              >
                 {shortMoveText(piece, destination)}
               </Link>
               <Rating readOnly size='sm' workEntry={[newCode, work[newCode]]} />

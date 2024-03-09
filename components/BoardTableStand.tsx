@@ -9,11 +9,12 @@ import { MovingState } from './BoardTable'
 interface P {
   board: Board
   movingState: MovingState
+  nextPreviewBoard: Board | undefined
   player: Player
   setMovingState: React.Dispatch<React.SetStateAction<MovingState>>
 }
 
-export const BoardTableStand: React.FC<P> = ({ board, movingState, player, setMovingState }) => {
+export const BoardTableStand: React.FC<P> = ({ board, movingState, nextPreviewBoard, player, setMovingState }) => {
   const standPieceCounts = useMemo<Array<[BasicPieceKind, number]>>(() => (
     BasicPieceKinds.slice(0, -1).map((kind) => (
       [kind, board.piecesByDetailedStandLocation[PlayerIndices[player]][BasicPieceKindIndices[kind]].length]
@@ -29,6 +30,7 @@ export const BoardTableStand: React.FC<P> = ({ board, movingState, player, setMo
           location={{ stand: true, player, basicPieceKind: kind }}
           moveCandidates={[]}
           movingState={movingState}
+          nextPreviewBoard={nextPreviewBoard}
           setMovingState={setMovingState}
         />
       ))}

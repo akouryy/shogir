@@ -40,10 +40,10 @@ export class Board {
     )
   }
 
-  pieceAt(location: DetailedPieceLocation): Piece | undefined {
+  piecesAt(location: DetailedPieceLocation): readonly Piece[] {
     return location.stand ?
-      this.piecesByDetailedStandLocation[PlayerIndices[location.player]][BasicPieceKindIndices[location.basicPieceKind]][0] :
-      this.pieceByBoardLocation[location.row][location.column]
+      this.piecesByDetailedStandLocation[PlayerIndices[location.player]][BasicPieceKindIndices[location.basicPieceKind]] :
+      pipe(this.pieceByBoardLocation[location.row][location.column], piece => piece ? [piece] : [])
   }
 
   /**

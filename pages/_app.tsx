@@ -23,6 +23,8 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   const [isSavingWork, setIsSavingWork] = useState(false)
   const [errorDecodingWork, setErrorDecodingWork] = useState<string>()
 
+  const shouldLoadWork = !/^\/(_|login)/.test(router.pathname)
+
   useBeforeUnload(work !== savedWork)
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     })
     setCognitoUserPool(userPool)
 
-    if(/^\/(_|login)/.test(router.pathname)) { return }
+    if(!shouldLoadWork) { return }
 
     const cognitoUser = userPool.getCurrentUser()
     if(!cognitoUser) {
@@ -74,7 +76,8 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         }
       })
     })
-  }, [router, router.pathname])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldLoadWork])
 
   useDebounce(() => {
     if(work === undefined) { return }

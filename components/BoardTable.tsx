@@ -36,7 +36,16 @@ export const BoardTable: React.FC<P> = ({ board }) => {
       <BoardTableStand board={board} movingState={movingState} player='後手' setMovingState={setMovingState} />
 
       {range(0, 8).map((row) => (
-        <div className='flex' key={row}>
+        <div
+          className={clsx(
+            'flex',
+            row === 0 && 'border-t-4',
+            row === 8 && 'border-b-4',
+            board.turn === '先手' && row === 8 ? 'border-b-black' : 'border-b-transparent',
+            board.turn === '後手' && row === 0 ? 'border-t-black' : 'border-t-transparent',
+          )}
+          key={row}
+        >
           {range(0, 8).map((column) => pipe(
             board.pieceByBoardLocation[row][column],
             piece => (

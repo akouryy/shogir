@@ -93,7 +93,7 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         setSavedWork(work)
       }
     })()
-  }, 3000, [work, isSavingWork])
+  }, 1000, [work, isSavingWork])
 
   return (
     <ShogirContext.Provider value={{ cognitoIdToken, cognitoUserPool, setCognitoIdToken, setWork, work }}>

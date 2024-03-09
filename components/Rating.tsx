@@ -1,9 +1,8 @@
-import clsx from 'clsx'
 import { range } from 'fp-ts/lib/ReadonlyNonEmptyArray'
 import React from 'react'
 import { VariantProps, tv } from 'tailwind-variants'
 
-const rating = tv({
+const ratingVariants = tv({
   base: 'rating rating-half -ml-2 align-text-bottom',
   variants: {
     size: {
@@ -16,7 +15,20 @@ const rating = tv({
   },
 })
 
-type P = VariantProps<typeof rating> & {
+const ratingStarVariants = tv({
+  base: 'mask mask-star-2 bg-secondary',
+  variants: {
+    odd: {
+      true: 'mask-half-1',
+      false: 'mask-half-2',
+    },
+    readOnly: {
+      true: 'cursor-default',
+    },
+  },
+})
+
+type P = VariantProps<typeof ratingVariants> & {
   workEntry: [string, { comment: string; rating: number }]
 } & (
   | {
@@ -31,7 +43,7 @@ type P = VariantProps<typeof rating> & {
 
 export const Rating: React.FC<P> = ({ readOnly, size, updateRating, workEntry: [code, workValue] }) => {
   return (
-    <div className={rating({ size })}>
+    <div className={ratingVariants({ size })}>
       <input
         checked={Math.floor(workValue.rating * 2) === 0}
         className='rating-hidden'
@@ -44,7 +56,7 @@ export const Rating: React.FC<P> = ({ readOnly, size, updateRating, workEntry: [
       {range(1, 10).map((value) => (
         <input
           checked={Math.floor(workValue.rating * 2) === value}
-          className={clsx('mask mask-star-2 bg-secondary', value % 2 === 1 ? 'mask-half-1' : 'mask-half-2')}
+          className={ratingStarVariants({ odd: value % 2 === 1, readOnly })}
           key={value}
           name={`${code}[rating]`}
           onChange={updateRating}

@@ -25,7 +25,7 @@ function encodePieceWithoutBasicPieceKind(piece: Piece): string {
   return BTOA[first] + BTOA[second]
 }
 
-export function encode(board: Board): string {
+function encode(board: Board): string {
   const pieces = sortBy(PieceOrdByKind)(board.pieces)
   return [...pieces.map(encodePieceWithoutBasicPieceKind), BTOA[PlayerIndices[board.turn]]].join('')
 }
@@ -47,7 +47,7 @@ function decodePiece([first, second]: readonly number[], codeIndex: number): Pie
   }
 }
 
-export function decode(rawCode: string): Board {
+function decode(rawCode: string): Board {
   const codes = chunksOf(2)([...rawCode].map((c) => ATOB[c]))
 
   const pieces = codes.slice(0, -1).map<Piece>(decodePiece)

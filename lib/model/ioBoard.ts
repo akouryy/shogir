@@ -2,7 +2,7 @@ import { chunksOf, replicate, sortBy } from 'fp-ts/lib/ReadonlyArray'
 import { range } from 'fp-ts/lib/ReadonlyNonEmptyArray'
 import * as t from 'io-ts'
 import { typedEntries } from '../util'
-import { Board } from './board'
+import { Board, InitialBoard } from './board'
 import { Piece, PieceOrdByKind, PlayerIndices, Players } from './piece'
 
 const BTOA = [
@@ -68,3 +68,5 @@ export const IOBoard = new t.Type<Board, string, unknown>(
   },
   encode,
 )
+
+export const InitialBoardCode = IOBoard.encode(InitialBoard)

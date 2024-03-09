@@ -3,11 +3,12 @@ import { concatAll } from 'fp-ts/lib/Monoid'
 import { contramap, getMonoid } from 'fp-ts/lib/Ord'
 import * as N from 'fp-ts/number'
 import { typedFromEntries } from '../util'
-import { BasicPieceKind, BasicPieceKindIndices, PieceKind } from './pieceKind'
+import { BasicPieceKind, BasicPieceKindIndices, PieceKind, longPieceKindText } from './pieceKind'
 
 export const Players = ['先手', '後手'] as const
 export type Player = typeof Players[number]
 export const PlayerIndices = typedFromEntries(Players.map((player, i) => [player, i]))
+export const PlayerMarks = { 先手: '☗', 後手: '☖' }
 
 export function invertPlayer(player: Player): Player {
   return player === '先手' ? '後手' : '先手'
@@ -44,4 +45,15 @@ export function isValidPromotionChange(from: Piece, to: MoveDestination): boolea
     !from.isPromoted && to.isPromoted && !['金', '玉'].includes(from.basicPieceKind) &&
     !from.stand &&
     (from.player === '先手' ? from.row <= 2 || to.row <= 2 : from.row >= 6 || to.row >= 6)
+}
+
+export function shortMoveText(from: Piece, to: MoveDestination): string {
+  return [
+    PlayerMarks[from.player],
+    '９８７６５４３２１'[to.column],
+    '一二三四五六七八九'[to.row],
+    longPieceKindText(from),
+    !from.isPromoted && to.isPromoted ? '成' : '',
+    from.stand ? '打' : '',
+  ].join('')
 }

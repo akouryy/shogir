@@ -2,7 +2,6 @@ import { pipe } from 'fp-ts/lib/function'
 import Link from 'next/link'
 import React, { useContext } from 'react'
 import { ShogirContext } from '../contexts/ShogirContext'
-import { IOBoard } from '../lib/model/ioBoard'
 
 const PageIndex: React.FC = () => {
   const { work } = useContext(ShogirContext)
@@ -10,8 +9,8 @@ const PageIndex: React.FC = () => {
 
   return (
     <>
-      {work?.map(([board]) => pipe(
-        IOBoard.encode(board),
+      {work && Object.entries(work).map(([code]) => pipe(
+        code,
         code => (
           <Link
             className='link link-primary block'

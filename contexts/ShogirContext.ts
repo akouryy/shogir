@@ -5,6 +5,7 @@ import { Work } from '../lib/model/work'
 export const ShogirContext = createContext<{
   cognitoIdToken?: CognitoIdToken,
   cognitoUserPool?: CognitoUserPool,
-  work?: Work,
   setCognitoIdToken?: (token: CognitoIdToken) => void,
+  setWork?: React.Dispatch<React.SetStateAction<Work | undefined>>,
+  work?: Work,
 }>({})

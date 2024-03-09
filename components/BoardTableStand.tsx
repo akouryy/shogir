@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import React, { useMemo } from 'react'
 import { Board } from '../lib/model/board'
 import { Player, PlayerIndices } from '../lib/model/piece'
-import { BasicPieceKind, BasicPieceKindIndices, BasicPieceKinds, ShortPieceKindText } from '../lib/model/pieceKind'
+import { BasicPieceKind, BasicPieceKindIndices, BasicPieceKinds, shortPieceKindText } from '../lib/model/pieceKind'
 import { MovingState } from './BoardTable'
 
 interface P {
@@ -20,7 +20,7 @@ export const BoardTableStand: React.FC<P> = ({ board, movingState, player, setMo
   ), [board, player])
 
   return (
-    <div className={clsx('my-2 flex justify-end', player === '先手' ? 'mt-2' : 'mb-2 flex-row-reverse')}>
+    <div className={clsx('mx-2 flex h-8 justify-end text-xl', player === '後手' && 'flex-row-reverse')}>
       {standPieceCounts.map(([kind, pieceCount]) => pieceCount > 0 && (
         <div
           className={clsx(
@@ -30,7 +30,7 @@ export const BoardTableStand: React.FC<P> = ({ board, movingState, player, setMo
           key={kind}
         >
           <button
-            className={clsx('relative size-full text-center align-middle text-xl', player === '後手' && 'rotate-180')}
+            className={clsx('relative size-full text-center align-middle', player === '後手' && 'rotate-180')}
             onClick={() => {
               if(movingState.piece?.stand && movingState.piece.basicPieceKind === kind) {
                 setMovingState({ type: 'none' })
@@ -41,7 +41,7 @@ export const BoardTableStand: React.FC<P> = ({ board, movingState, player, setMo
               }
             }}
           >
-            {ShortPieceKindText({ basicPieceKind: kind, isPromoted: false })}
+            {shortPieceKindText({ basicPieceKind: kind, isPromoted: false })}
             {pieceCount >= 2 && (
               <div className='absolute -right-1 bottom-0 text-base font-bold text-primary'>
                 {pieceCount}

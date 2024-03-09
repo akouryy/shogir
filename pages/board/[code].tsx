@@ -2,7 +2,7 @@ import { fold } from 'fp-ts/lib/Either'
 import { pipe } from 'fp-ts/lib/function'
 import { useRouter } from 'next/router'
 import React from 'react'
-import { BoardTable } from '../../components/BoardTable'
+import { BoardDetails } from '../../components/BoardDetails'
 import { IOBoard } from '../../lib/model/ioBoard'
 
 const PageBoardCode: React.FC = () => {
@@ -17,7 +17,7 @@ const PageBoardCode: React.FC = () => {
         maybeBoard,
         fold(
           (errors) => <div className='alert alert-error'>{errors.toString()}</div>,
-          (board) => <BoardTable board={board} />,
+          (board) => <BoardDetails board={board} />,
         ),
       )}
     </>

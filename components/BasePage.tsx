@@ -32,7 +32,7 @@ export const BasePage: React.FC<P> = ({ children, errorDecodingWork, hasUnsavedC
         <Link className='flex-1 text-3xl' href='/'>☗shogir</Link>
 
         {errorDecodingWork && (
-          <div className='alert alert-error' role='alert'>
+          <div className='alert alert-error z-50 self-start' role='alert'>
             {errorDecodingWork}
           </div>
         )}

@@ -1,21 +1,21 @@
 import * as t from 'io-ts'
-import { InitialBoard } from './board'
-import { IOBoard } from './ioBoard'
+import { InitialBoardCode } from './ioBoard'
 
-export const IOWork = t.array(
-  t.tuple([IOBoard, t.intersection([
+export const IOWork = t.record(
+  t.string,
+  t.intersection([
     t.type({
-      moves: t.array(t.string),
+      comment: t.string,
+      rating: t.number,
     }),
     t.partial({
-      comment: t.string,
       bookmarkKey: t.string,
     }),
-  ])]),
+  ]),
 )
 
 export type Work = t.TypeOf<typeof IOWork>
 
-export const InitialWork: Work = [
-  [InitialBoard, { moves: [] }],
-]
+export const InitialWork: Work = {
+  [InitialBoardCode]: { comment: '', rating: 0 },
+}

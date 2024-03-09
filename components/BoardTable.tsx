@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Board } from '../lib/model/board'
 import { IOBoard } from '../lib/model/ioBoard'
 import { Piece } from '../lib/model/piece'
-import { ShortPieceKindText } from '../lib/model/pieceKind'
+import { shortPieceKindText } from '../lib/model/pieceKind'
 import { BoardTableStand } from './BoardTableStand'
 
 interface P {
@@ -74,7 +74,7 @@ export const BoardTable: React.FC<P> = ({ board }) => {
                     }
                   }}
                 >
-                  {piece && ShortPieceKindText(piece)}
+                  {piece && shortPieceKindText(piece)}
                 </button>
               </div>
             ),

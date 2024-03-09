@@ -96,7 +96,7 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   }, 3000, [work, isSavingWork])
 
   return (
-    <ShogirContext.Provider value={{ cognitoIdToken, cognitoUserPool, setCognitoIdToken, work }}>
+    <ShogirContext.Provider value={{ cognitoIdToken, cognitoUserPool, setCognitoIdToken, setWork, work }}>
       <BasePage errorDecodingWork={errorDecodingWork} hasUnsavedChanges={work !== savedWork} isSavingWork={isSavingWork}>
         <Component {...pageProps} />
       </BasePage>

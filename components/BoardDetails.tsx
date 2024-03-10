@@ -1,8 +1,10 @@
+import clsx from 'clsx'
 import { sortBy } from 'fp-ts/lib/ReadonlyArray'
 import { pipe } from 'fp-ts/lib/function'
 import Link from 'next/link'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ShogirContext } from '../contexts/ShogirContext'
+import { useDebouncedMemo } from '../hooks/useDebouncedMemo'
 import { Board } from '../lib/model/board'
 import { IOBoard, InitialBoardCode } from '../lib/model/ioBoard'
 import { shortMoveText } from '../lib/model/piece'
@@ -15,6 +17,8 @@ interface P {
   board: Board;
 }
 
+type RegisteredMoveWithTimeline = RegisteredMove & { timeline: ReturnType<typeof bestMoveTimeline> }
+
 export const BoardDetails: React.FC<P> = ({ board }) => {
   const { setWork, work } = useContext(ShogirContext)
 
@@ -22,7 +26,14 @@ export const BoardDetails: React.FC<P> = ({ board }) => {
 
   const code = useMemo(() => IOBoard.encode(board), [board])
 
-  const moves: RegisteredMove[] = useMemo(() => registeredMoves(board, work), [board, work])
+  const debouncedWork = useDebouncedMemo(() => work, [work], 2500)
+  const currentRegisteredMoves: readonly RegisteredMoveWithTimeline[] = useMemo(() => (
+    sortBy(registeredMoveOrd(debouncedWork))(registeredMoves(board, debouncedWork)).map((move) => ({
+      ...move,
+      timeline: debouncedWork ? bestMoveTimeline(10, debouncedWork, board.movePiece(move.piece, move.destination)) : [],
+    }))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), [board, debouncedWork, work !== undefined])
 
   const updateComment = (ev: React.ChangeEvent<HTMLTextAreaElement>): void => {
     setWork?.((prevWork) =>
@@ -78,45 +89,45 @@ export const BoardDetails: React.FC<P> = ({ board }) => {
       <div className='divider divider-horizontal' />
       <div>
         <ul className='list-disc'>
-          {sortBy(registeredMoveOrd(work))(moves).map(({ piece, destination, newCode }) => work && (
-            <li className='' key={shortMoveText(piece, destination)}>
-              <Link
-                className='link-hover link-primary mr-4'
-                href={`/board/${newCode}`}
-                // eslint-disable-next-line react/jsx-no-bind
-                onMouseEnter={() => setNextPreviewBoard(board.movePiece(piece, destination))}
-                // eslint-disable-next-line react/jsx-no-bind
-                onMouseLeave={() => setNextPreviewBoard(undefined)}
-              >
-                {shortMoveText(piece, destination)}
-              </Link>
-              <Rating readOnly size='sm' workEntry={[newCode, work[newCode]]} />
-              {bestMoveTimeline(10, work, board.movePiece(piece, destination)).map((timelineItem, i) => (
+          {work && currentRegisteredMoves.map(({ piece, destination, newCode, timeline }) => pipe(
+            [newCode, ...timeline.map((timelineItem) => timelineItem.newCode)]
+              .map((c) => work?.[c]?.comment)
+              .findIndex((c) => c),
+            (commentIndex) => (
+              <li className='' key={shortMoveText(piece, destination)}>
                 <Link
-                  className='link-hover ml-4'
-                  href={`/board/${timelineItem.newCode}`}
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={i}
+                  className={clsx('link-primary mr-4', commentIndex === 0 ? 'link' : 'link-hover')}
+                  href={`/board/${newCode}`}
                   // eslint-disable-next-line react/jsx-no-bind
-                  onMouseEnter={() => setNextPreviewBoard(timelineItem.board)}
+                  onMouseEnter={() => setNextPreviewBoard(board.movePiece(piece, destination))}
                   // eslint-disable-next-line react/jsx-no-bind
                   onMouseLeave={() => setNextPreviewBoard(undefined)}
                 >
-                  {shortMoveText(timelineItem.piece, timelineItem.destination)}
+                  {shortMoveText(piece, destination)}
                 </Link>
-              ))}
-              <p>
-                {
-                  [
-                    newCode,
-                    ...bestMoveTimeline(10, work, board.movePiece(piece, destination)).map((timelineItem) => timelineItem.newCode),
-                  ]
-                    .map((c) => work?.[c]?.comment)
-                    .find((c) => c !== '')
-                }
-              </p>
-            </li>
-          ))}
+                {work && (<Rating readOnly size='sm' workEntry={[newCode, work[newCode]]} />)}
+                {timeline.map((timelineItem, i) => (
+                  <Link
+                    className={clsx('ml-4', commentIndex === i + 1 ? 'link' : 'link-hover')}
+                    href={`/board/${timelineItem.newCode}`}
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={i}
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onMouseEnter={() => setNextPreviewBoard(timelineItem.board)}
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onMouseLeave={() => setNextPreviewBoard(undefined)}
+                  >
+                    {shortMoveText(timelineItem.piece, timelineItem.destination)}
+                    {timelineItem.hasSiblings && '*'}
+                  </Link>
+                ))}
+                <p>
+                  {commentIndex >= 0 && (
+                    work?.[[newCode, ...timeline.map((timelineItem) => timelineItem.newCode)][commentIndex]]?.comment
+                  )}
+                </p>
+              </li>
+            )))}
         </ul>
       </div>
     </div>

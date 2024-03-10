@@ -25,9 +25,19 @@ function encodePieceWithoutBasicPieceKind(piece: Piece): string {
   return BTOA[first] + BTOA[second]
 }
 
+const encodeCache = new Map<Board, string>()
+const decodeCache = new Map<string, Board>()
+
 function encode(board: Board): string {
+  const cached = encodeCache.get(board)
+  if(cached) { return cached }
+
   const pieces = sortBy(PieceOrdByKind)(board.pieces)
-  return [...pieces.map(encodePieceWithoutBasicPieceKind), BTOA[PlayerIndices[board.turn]]].join('')
+  const code = [...pieces.map(encodePieceWithoutBasicPieceKind), BTOA[PlayerIndices[board.turn]]].join('')
+
+  encodeCache.set(board, code)
+  decodeCache.set(code, board)
+  return code
 }
 
 function decodePiece([first, second]: readonly number[], codeIndex: number): Piece {
@@ -48,12 +58,18 @@ function decodePiece([first, second]: readonly number[], codeIndex: number): Pie
 }
 
 function decode(rawCode: string): Board {
+  const cached = decodeCache.get(rawCode)
+  if(cached) { return cached }
+
   const codes = chunksOf(2)([...rawCode].map((c) => ATOB[c]))
 
   const pieces = codes.slice(0, -1).map<Piece>(decodePiece)
   const turn = Players[codes[codes.length - 1][0]]
+  const board = new Board(turn, pieces)
 
-  return new Board(turn, pieces)
+  decodeCache.set(rawCode, board)
+  encodeCache.set(board, rawCode)
+  return board
 }
 
 export const IOBoard = new t.Type<Board, string, unknown>(

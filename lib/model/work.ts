@@ -1,5 +1,5 @@
 import { Ord, contramap, reverse } from 'fp-ts/lib/Ord'
-import { sortBy } from 'fp-ts/lib/ReadonlyArray'
+import { sortBy, uniq } from 'fp-ts/lib/ReadonlyArray'
 import * as N from 'fp-ts/number'
 import * as S from 'fp-ts/string'
 import * as t from 'io-ts'
@@ -28,15 +28,17 @@ export const InitialWork: Work = {
 
 export interface RegisteredMove { piece: Piece, destination: MoveDestination, newCode: string }
 
-export function registeredMoves(board: Board, work: Work | undefined): RegisteredMove[] {
+export function registeredMoves(board: Board, work: Work | undefined): readonly RegisteredMove[] {
   if(!work) { return [] }
 
-  return board.pieces
-    .flatMap((piece) => (
-      board.moveCandidates(piece)
-        .map((destination) => ({ piece, destination, newCode: IOBoard.encode(board.movePiece(piece, destination)) }))
-    ))
-    .filter(({ newCode }) => work[newCode])
+  return uniq(contramap((move: RegisteredMove) => move.newCode)(S.Ord))(
+    board.pieces
+      .flatMap((piece) => (
+        board.moveCandidates(piece)
+          .map((destination) => ({ piece, destination, newCode: IOBoard.encode(board.movePiece(piece, destination)) }))
+      ))
+      .filter(({ newCode }) => work[newCode]),
+  )
 }
 
 export function registeredMoveOrd(work: Work | undefined): Array<Ord<RegisteredMove>> {
@@ -46,7 +48,7 @@ export function registeredMoveOrd(work: Work | undefined): Array<Ord<RegisteredM
   ]
 }
 
-export function bestMoveTimeline(count: number, work: Work, board: Board): Array<RegisteredMove & { board: Board }> {
+export function bestMoveTimeline(count: number, work: Work, board: Board): Array<RegisteredMove & { board: Board, hasSiblings: boolean }> {
   const ret = []
   let currentBoard = board
 
@@ -55,7 +57,7 @@ export function bestMoveTimeline(count: number, work: Work, board: Board): Array
     if(moves.length === 0) { break }
     const bestMove = sortBy(registeredMoveOrd(work))(moves)[0]
     currentBoard = currentBoard.movePiece(bestMove.piece, bestMove.destination)
-    ret.push({ ...bestMove, board: currentBoard })
+    ret.push({ ...bestMove, board: currentBoard, hasSiblings: moves.length >= 2 })
   }
 
   return ret

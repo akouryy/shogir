@@ -10,3 +10,6 @@ rules:
   "@typescript-eslint/strict-boolean-expressions": off
   no-shadow: error
   tailwindcss/classnames-order: error
+  react-hooks/exhaustive-deps:
+    - error
+    - additionalHooks: "(useDebouncedMemo)"

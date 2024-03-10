@@ -16,7 +16,7 @@ export type MovingState =
   | { type: 'moving', piece: Piece }
   // | { type: 'askingPromotion', piece: Piece, destination: { row: number, column: number } }
 
-export const BoardTable: React.FC<P> = ({ board, nextPreviewBoard }) => {
+export const BoardTable: React.FC<P> = React.memo(function BoardTable({ board, nextPreviewBoard }) {
   const [movingState, setMovingState] = useState<MovingState>({ type: 'none' })
 
   const moveCandidates = useMemo(() => {
@@ -71,4 +71,4 @@ export const BoardTable: React.FC<P> = ({ board, nextPreviewBoard }) => {
       />
     </div>
   )
-}
+})
